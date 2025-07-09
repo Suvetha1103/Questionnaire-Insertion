@@ -39,6 +39,17 @@ def main():
     if "question_id" in df.columns:
         df["question_id"] = df["question_id"].apply(lambda x: ensure_int(x, ""))
 
+    # Ensure parent_question_id is the string 'null' if missing, empty, or 'null'
+    if "parent_question_id" in df.columns:
+        def fix_parent_id(x):
+            if pd.isna(x):
+                return 'null'
+            s = str(x).strip().lower()
+            if s == "" or s == "null":
+                return 'null'
+            return x
+        df["parent_question_id"] = df["parent_question_id"].apply(fix_parent_id)
+
     # Generate unique questionnaire_group_question_id if missing
     if "questionnaire_group_question_id" not in df.columns:
         df["questionnaire_group_question_id"] = ""
