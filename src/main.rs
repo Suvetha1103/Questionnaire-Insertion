@@ -5,8 +5,6 @@ use anyhow::Result;
 use db::get_db_pool;
 use excel::read_excel;
 use insert::{
-    insert_answer,
-    insert_kit,
     insert_parent_question,
     insert_question,
     insert_question_group,
@@ -14,8 +12,6 @@ use insert::{
     insert_questionnaire_group_question,
     insert_questionnaire_group_version,
     insert_questionnaire_version,
-    insert_test,
-    insert_user,
 };
 use dotenv::dotenv;
 use sqlx::PgPool;
