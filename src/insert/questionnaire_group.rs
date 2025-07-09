@@ -12,7 +12,7 @@ pub async fn insert_question_group(
          VALUES ($1, $2, $3, $4, $5, $6)
          ON CONFLICT (id) DO NOTHING",
         group_id,
-        row.get("question_group_name"),
+        row.get("group_name"),
         row.get("image_url"),
         row.get("description"),
         Utc::now().naive_utc(),
@@ -31,7 +31,8 @@ pub async fn insert_questionnaire_group_version(
 ) -> anyhow::Result<()> {
     sqlx::query!(
         "INSERT INTO questionnaire_group_version (id, question_group_id, minutes_to_complete, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5)",
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (id) DO NOTHING",
         questionnaire_group_version_id,
         group_id,
         row.get("minutes_to_complete").unwrap_or(&"0".to_string()).parse::<i32>()?,

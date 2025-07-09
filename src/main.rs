@@ -30,7 +30,7 @@ async fn main() -> Result<()> {
     let rows = read_excel("question_data_cleaned.xlsx")?;
 
     let mut group_name_to_id = HashMap::new();
-    let mut next_id = 1;
+    let mut next_group_id = 1;
 
     let mut group_version_to_id = HashMap::new();
     let mut next_group_version_id = 1;
@@ -41,10 +41,11 @@ async fn main() -> Result<()> {
     let mut failures = vec![];
 
     for (i, row) in rows.iter().enumerate() {
-        let group_name = row.get("question_group_name").unwrap_or(&"UNKNOWN".to_string()).clone();
+        let group_name = row.get("group_name").unwrap_or(&"UNKNOWN".to_string()).clone();
         let group_id = *group_name_to_id.entry(group_name.clone()).or_insert_with(|| {
-            let id = next_id;
-            next_id += 1;
+            let id = next_group_id;
+            next_group_id += 1;
+            println!("Assigning group_id {} to group_name '{}'", id, group_name);
             id
         });
 
@@ -69,12 +70,12 @@ async fn main() -> Result<()> {
             }
             insert_questionnaire_group_question(&pool, row).await?;
             insert_parent_question(&pool, row).await?;
-            insert_questionnaire_version(&pool, row).await?;
-            insert_questionnaire(&pool, row).await?;
-            insert_user(&pool, row).await?;
-            insert_kit(&pool, row).await?;
-            insert_test(&pool, row).await?;
-            insert_answer(&pool, row).await?;
+         //   insert_questionnaire_version(&pool, row).await?;
+          //  insert_questionnaire(&pool, row).await?;
+            //insert_user(&pool, row).await?;
+            //insert_kit(&pool, row).await?;
+            //insert_test(&pool, row).await?;
+            //insert_answer(&pool, row).await?;
             Ok::<(), anyhow::Error>(())
         }.await;
 
