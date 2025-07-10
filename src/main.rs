@@ -41,6 +41,11 @@ async fn main() -> Result<()> {
     let mut failures = vec![];
 
     for (i, row) in rows.iter().enumerate() {
+        // Skip rows without a valid question_id
+        if row.get("question_id").is_none() || row.get("question_id").unwrap().trim().is_empty() {
+            continue;
+        }
+        
         let group_name = row.get("group_name").unwrap_or(&"UNKNOWN".to_string()).clone();
         let group_id = *group_name_to_id.entry(group_name.clone()).or_insert_with(|| {
             let id = next_group_id;
