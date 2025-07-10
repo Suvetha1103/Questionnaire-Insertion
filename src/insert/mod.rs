@@ -3,7 +3,7 @@ pub mod questionnaire_group;
 pub mod questionnaire;
 pub mod questionnaire_version;
 
-
+pub mod kit_questionnaire;
 pub mod parent_question; 
 
 
@@ -12,4 +12,5 @@ pub use question::*;
 pub use questionnaire::*;
 pub use questionnaire_group::*;
 pub use questionnaire_version::*;
+pub use kit_questionnaire::*;
 

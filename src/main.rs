@@ -14,6 +14,7 @@ use insert::{
     insert_questionnaire_group_question,
     insert_questionnaire_group_version,
     insert_questionnaire_version,
+    kit_questionnaire::insert_kit_questionnaire_versions,
 };
 use dotenv::dotenv;
 use sqlx::PgPool;
@@ -106,6 +107,7 @@ async fn main() -> Result<()> {
         ordinal: 0, // or as needed
     };
     insert_questionnaire(&pool, &questionnaire).await?;
+    insert_kit_questionnaire_versions(&pool, version.id).await?;
 
     Ok(())
 }
