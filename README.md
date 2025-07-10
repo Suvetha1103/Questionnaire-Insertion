@@ -2,7 +2,7 @@
    python3 clean_excel.py
 
 **To create tables:**
-  CREATE TABLE question (
+CREATE TABLE question (
     id BIGINT PRIMARY KEY,
     title TEXT,
     info TEXT,
@@ -28,22 +28,18 @@ CREATE TABLE question_group (
 
 CREATE TABLE questionnaire_group_version (
     id BIGSERIAL PRIMARY KEY,
-    question_group_id BIGINT,
+    question_group_id BIGINT,  
     minutes_to_complete INT,
     created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    FOREIGN KEY (question_group_id) REFERENCES question_group(id)
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE questionnaire_group_question (
     id BIGINT PRIMARY KEY,
-    questionnaire_group_version_id BIGINT,
-    question_id BIGINT,
-    ordinal INT,
+    questionnaire_group_version_id BIGINT,  
+    question_id BIGINT,                     
     created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    FOREIGN KEY (questionnaire_group_version_id) REFERENCES questionnaire_group_version(id),
-    FOREIGN KEY (question_id) REFERENCES question(id)
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE questionnaire_version (
@@ -56,22 +52,22 @@ CREATE TABLE questionnaire_version (
 
 CREATE TABLE questionnaire (
     id BIGINT PRIMARY KEY,
-    questionnaire_group_version_id BIGINT,
-    questionnaire_version_id BIGINT,
+    questionnaire_group_version_id BIGINT,  
+    questionnaire_version_id BIGINT,        
     ordinal INT,
     created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    FOREIGN KEY (questionnaire_group_version_id) REFERENCES questionnaire_group_version(id),
-    FOREIGN KEY (questionnaire_version_id) REFERENCES questionnaire_version(id)
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE parent_question (
     id BIGSERIAL PRIMARY KEY,
-    question_id BIGINT,
-    parent_question_id BIGINT,
+    question_id BIGINT,          
+    parent_question_id BIGINT,    
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
+
+
 
 **To truncate table:**
   DELETE FROM questionnaire_group_question;
