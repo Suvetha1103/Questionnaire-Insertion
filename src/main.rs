@@ -1,6 +1,8 @@
 mod db;
 mod excel;
 mod insert;
+mod schemas;
+
 use anyhow::Result;
 use db::get_db_pool;
 use excel::read_excel;
@@ -16,6 +18,8 @@ use insert::{
 use dotenv::dotenv;
 use sqlx::PgPool;
 use std::collections::HashMap;
+use crate::schemas::questionnaire_version::QuestionnaireVersion;
+use crate::schemas::questionnaire::Questionnaire;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -66,12 +70,8 @@ async fn main() -> Result<()> {
             }
             insert_questionnaire_group_question(&pool, row).await?;
             insert_parent_question(&pool, row).await?;
-         //   insert_questionnaire_version(&pool, row).await?;
-          //  insert_questionnaire(&pool, row).await?;
-            //insert_user(&pool, row).await?;
-            //insert_kit(&pool, row).await?;
-            //insert_test(&pool, row).await?;
-            //insert_answer(&pool, row).await?;
+            //insert_questionnaire(&pool, row).await?;
+    
             Ok::<(), anyhow::Error>(())
         }.await;
 
@@ -80,7 +80,13 @@ async fn main() -> Result<()> {
             Err(e) => failures.push((i + 1, e.to_string())), // +1 for Excel row number (header is row 1)
         }
     }
+    let version = QuestionnaireVersion {
+        id: 1,
+        description: "first version of questionnaire with 8 groups".to_string(),
+        is_active: true,
+    };
 
+    insert_questionnaire_version(&pool, &version).await?;
     println!("✅ Import complete: {} succeeded, {} failed", successes, failures.len());
     if !failures.is_empty() {
         println!("❌ Failed rows:");
@@ -88,9 +94,17 @@ async fn main() -> Result<()> {
             println!("  Row {}: {}", row_num, err);
         }
     }
+    let questionnaire = Questionnaire {
+        id: 1, // or generate as needed
+        questionnaire_group_version_id: 1,
+        questionnaire_version_id: version.id,
+        ordinal: 0, // or as needed
+    };
+    insert_questionnaire(&pool, &questionnaire).await?;
 
     Ok(())
 }
+
 
 // ✅ Simple DB connectivity check
 async fn test_connection(pool: &PgPool) -> Result<()> {
