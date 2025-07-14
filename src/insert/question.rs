@@ -12,6 +12,10 @@ pub async fn insert_question(pool: &PgPool, row: &HashMap<String, String>) -> an
         .ok_or_else(|| anyhow::anyhow!("Missing is_required"))?
         .parse::<bool>()
         .map_err(|_| anyhow::anyhow!("Invalid is_required"))?;
+    let is_reset_question = row.get("is_reset_question")
+        .ok_or_else(|| anyhow::anyhow!("Missing is_reset_question"))?
+        .parse::<bool>()
+        .map_err(|_| anyhow::anyhow!("Invalid is_reset_question"))?;
     let has_single_parent_question = match row.get("has_single_parent_question") {
         Some(v) => v.parse::<bool>().map_err(|_| anyhow::anyhow!("Invalid has_single_parent_question"))?,
         None => false,
@@ -29,17 +33,18 @@ pub async fn insert_question(pool: &PgPool, row: &HashMap<String, String>) -> an
         r#"
         INSERT INTO question (
             id, title, info, detailed_info,
-            is_required, has_single_parent_question,
+            is_required, is_reset_question, has_single_parent_question,
             branch_on_parent_answer, default_answer_if_hidden,
             answer_type, meta_data, created_at, updated_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9, $10::jsonb, $11, $12)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11::jsonb, $12, $13)
         "#,
         id,
         row.get("title"),
         row.get("info"),
         row.get("detailed_info"),
         is_required,
+        is_reset_question,
         has_single_parent_question,
         branch_on_parent_answer,
         row.get("default_answer_if_hidden"),

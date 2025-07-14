@@ -29,15 +29,19 @@ def ensure_int(val, default=None):
 
 
 def main():
-    df = pd.read_excel("question_data.xlsx", sheet_name="new table format")
+    df = pd.read_excel("question_data.xlsx", sheet_name="new table format", keep_default_na=False)
     # Clean JSON fields robustly
     for col in ["meta_data", "branch_on_parent_answer"]:
         if col in df.columns:
             df[col] = df[col].apply(fix_json_field)
 
     # Ensure question_id is int and not missing
-    if "question_id" in df.columns:
-        df["question_id"] = df["question_id"].apply(lambda x: ensure_int(x, ""))
+    def ensure_int(val, default=None):
+        try:
+            return int(float(str(val).strip()))
+        except Exception:
+            print(f"Invalid question_id: {val}")  # Debug print
+            return default
 
     # Ensure parent_question_id is the string 'null' if missing, empty, or 'null'
     if "parent_question_id" in df.columns:
@@ -84,8 +88,8 @@ def main():
             version_ids.append(group_to_version_id[group])
         df["questionnaire_group_version_id"] = version_ids
 
-    # Only keep the first 167 rows
-    df = df.head(167)
+    # Only keep rows where question_id is present (not empty or null)
+    df = df[df["question_id"] != ""]
 
     # Force all ordinal values to integers before saving
     if "ordinal" in df.columns:
@@ -95,10 +99,26 @@ def main():
             except Exception:
                 return 0  # Default value if empty or invalid
         df["ordinal"] = df["ordinal"].apply(fix_ordinal)
+    if "default_answer_if_hidden" not in df.columns:
+     df["default_answer_if_hidden"] = ""
 
-    # Save cleaned file
+    def fix_default_answer(val):
+        val_str = str(val).strip()
+        if val_str.lower() == "n/a":
+            return "N/A"
+        if val_str.lower() == "null":
+            return "null"
+        return val_str
+
+    # Apply cleaning
+    df["default_answer_if_hidden"] = df["default_answer_if_hidden"].apply(fix_default_answer)
+
+    # Save and check
+    print(df["default_answer_if_hidden"].unique())
     df.to_excel("question_data_cleaned.xlsx", index=False)
     print("Cleaned data saved to question_data_cleaned.xlsx")
+
+   
 
 if __name__ == "__main__":
     main()
