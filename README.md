@@ -71,10 +71,11 @@ CREATE TABLE parent_question (
 
 
 **To truncate table:**
-  DELETE FROM questionnaire_group_question;
+DELETE FROM questionnaire_group_question;
 DELETE FROM questionnaire_group_version;
 DELETE FROM question_group;
 DELETE FROM question;
 DELETE FROM questionnaire;
 DELETE FROM questionnaire_version;
 TRUNCATE TABLE parent_question;
+TRUNCATE TABLE kit_questionnaire_version;
