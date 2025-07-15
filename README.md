@@ -13,6 +13,7 @@ CREATE TABLE question (
     default_answer_if_hidden TEXT,
     answer_type TEXT,
     meta_data JSONB,
+    is_reset_question BOOLEAN,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
